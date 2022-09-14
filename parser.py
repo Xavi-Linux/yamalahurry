@@ -1,10 +1,14 @@
-from argparse import ArgumentParser
+from argparse import ArgumentParser, Namespace
 
 
 def get_parser() -> ArgumentParser:
-    parser:ArgumentParser = ArgumentParser('Yamala Hurry')
-    parser.add_argument('-f', '--folder')
+    parse:ArgumentParser = ArgumentParser(description='Yamala Hurry', prog='yamala')
+    parse.add_argument('-f', '--folder', default=None, dest='folder')
+
+    return parse
 
 
 if __name__ == '__main__':
-    pass
+
+    parser: ArgumentParser = get_parser()
+    namespace: Namespace = parser.parse_args()

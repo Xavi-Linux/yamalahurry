@@ -1,25 +1,32 @@
 import pytest
 
+from yamalahurry.parser import get_parser
+
 from argparse import ArgumentParser, Namespace
+from typing import List
 import sys
-
-
-def args():
-    return ['-f']
 
 
 @pytest.fixture()
 def create_parser():
-    parser: ArgumentParser = ArgumentParser(description='Yamala Hurry')
+    parser: ArgumentParser = get_parser()
+
     return parser
+
+
+@pytest.fixture
+def monkey_factory(monkeypatch):
+    def wrapper(data: List):
+        monkeypatch.setattr(sys, 'argv', data)
+
+    return wrapper
 
 
 @pytest.mark.parametrize('arguments',
                          [(['-f', 'val']),
-                          (['--folder', 'val']),
-                          (['-s'])]
-)
-def test_parse_arguments(create_parser, monkeypatch, arguments):
-    monkeypatch.setattr(sys, 'argv', arguments)
-    create_parser.add_argument('-f', '--folder')
+                          (['--folder', 'val'])
+                         ])
+def test_folder_arguments(create_parser, monkey_factory, arguments):
+    monkey_factory(arguments)
     namespace: Namespace = create_parser.parse_args(sys.argv)
+    assert 'folder' in namespace
