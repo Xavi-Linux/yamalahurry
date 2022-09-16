@@ -4,7 +4,7 @@ Test cases for the application entrypoint
 
 import pytest
 
-from yamalahurry.parser import get_parser
+from yamalahurry.yamala.cli import get_parser
 
 from argparse import ArgumentParser, Namespace
 from pathlib import Path
