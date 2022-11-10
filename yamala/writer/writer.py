@@ -2,16 +2,26 @@
 Module for Writer classes
 """
 import abc
+from openpyxl.workbook.workbook import Workbook
 from pathlib import Path
-from typing import Iterable, Iterator, Union, TypeVar
+from typing import Dict, Iterable, Iterator, List, Union, TypeVar
 
 PathLikeObj = TypeVar('PathLikeObj', str, Path)
+
+
+class WrongInputStructure(Exception):
+
+    def __init__(self, message: str):
+        Exception.__init__(self, message)
 
 
 class AbstractWriter(abc.ABC):
 
     def __init__(self, folderpath: PathLikeObj, *args, **kwargs):
-        self.folderpath = folderpath
+        if isinstance(folderpath, str):
+            folderpath = Path(folderpath)
+
+        self.folderpath: Path = folderpath
 
     @abc.abstractmethod
     def process(self, input: Union[Iterable, Iterator]) -> None:
@@ -30,8 +40,44 @@ class AbstractWriter(abc.ABC):
 
 class OpenxlpyWriter(AbstractWriter):
 
-    def process(self, input: Union[Iterable, Iterator]) -> None:
-        pass
+    def __init__(self,folderpath: PathLikeObj, *args, **kwargs):
+        AbstractWriter.__init__(self, folderpath)
+        self.workbook = Workbook()
+        self._input = None
+
+    def process(self, input: Dict[str, Dict[str, Union[Dict, List]]]) -> None:
+        """
+        input must have the following structure:
+
+            {
+                'sheet1_name: {
+                        'rows': ['row1_text', 'row2_text' ...],
+                        'columns: {
+                                'column1_header': [row1_col1_value, row2_col1_value, ...],
+                                'column2_header: ...
+                        }
+                },
+                'sheet2_name: ...
+            }
+
+        """
+        self._input = input
+
+        self._validate_input()
 
     def save(self, filename: str) -> None:
         pass
+
+    def _validate_input(self) -> None:
+        if isinstance(self._input, Dict):
+            if len(self._input) > 0:
+                if all(
+                        map(
+                            lambda v: isinstance(v,Dict),
+                            self._input.values()
+                        )
+                ):
+
+                    return None
+
+        raise WrongInputStructure(self.process.__doc__)
