@@ -1,1 +1,1 @@
-from reader import AbstractReader, PyYamlReader
+from .reader import AbstractReader, PyYamlReader
