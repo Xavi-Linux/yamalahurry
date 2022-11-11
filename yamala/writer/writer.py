@@ -73,11 +73,30 @@ class OpenxlpyWriter(AbstractWriter):
             if len(self._input) > 0:
                 if all(
                         map(
-                            lambda v: isinstance(v,Dict),
+                            lambda v: isinstance(v, Dict),
                             self._input.values()
                         )
                 ):
+                    all_sheets_validated: bool = False
+                    for sheet in self._input:
+                        all_sheets_validated = False
+                        try:
+                            rows = self._input[sheet]['rows']
+                            columns = self._input[sheet]['columns']
+                            if isinstance(rows, List) and isinstance(columns, Dict):
+                                rows_len: int = len(rows)
+                                if all(
+                                        map(
+                                            lambda v: isinstance(v, List) and len(v) == rows_len,
+                                            columns.values()
+                                        )
+                                ):
+                                    all_sheets_validated = True
 
-                    return None
+                        except KeyError:
+                            raise WrongInputStructure(self.process.__doc__)
+
+                    if all_sheets_validated:
+                        return None
 
         raise WrongInputStructure(self.process.__doc__)
