@@ -43,7 +43,7 @@ def test_instantiation(generate_writer, folder_path, expected_type):
 
 # ### Sad path
 @pytest.mark.parametrize(
-    ('input', 'expected'),
+    ('inputs', 'expected'),
     [
         (#Test 1
             {},
@@ -269,7 +269,7 @@ def test_instantiation(generate_writer, folder_path, expected_type):
         'column-lists-length-not-equals-rows-length-2'
     ]
 )
-def test_wrong_input(generate_writer, input, expected):
+def test_wrong_input(generate_writer, inputs, expected):
     with pytest.raises(WrongInputStructure) as exp:
         generate_writer.process(input)
     assert expected == exp.value.args[0]

@@ -24,7 +24,7 @@ class AbstractWriter(abc.ABC):
         self.folderpath: Path = folderpath
 
     @abc.abstractmethod
-    def process(self, input: Union[Iterable, Iterator]) -> None:
+    def process(self, inputs: Union[Iterable, Iterator]) -> None:
         """
         Method that receives a data structure and this used to populate an Excel Workbook
         """
@@ -40,12 +40,12 @@ class AbstractWriter(abc.ABC):
 
 class OpenxlpyWriter(AbstractWriter):
 
-    def __init__(self,folderpath: PathLikeObj, *args, **kwargs):
+    def __init__(self,folderpath: PathLikeObj):
         AbstractWriter.__init__(self, folderpath)
         self.workbook = Workbook()
         self._input = None
 
-    def process(self, input: Dict[str, Dict[str, Union[Dict, List]]]) -> None:
+    def process(self, inputs: Dict[str, Dict[str, Union[Dict, List]]]) -> None:
         """
         input must have the following structure:
 
@@ -61,7 +61,7 @@ class OpenxlpyWriter(AbstractWriter):
             }
 
         """
-        self._input = input
+        self._input = inputs
 
         self._validate_input()
 
