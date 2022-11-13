@@ -242,7 +242,21 @@ def test_instantiation(generate_writer, folder_path, expected_type):
             },
             3,
             ['roles', 'ro_les', 'ro_les_1']
-        )
+        ),
+        (#Test 10
+            {
+               'b' + 'a' * 35:{
+                    'rows':['reader', 'editor', 'creator'],
+                    'columns':{
+                        'user1':[1, 0, 0],
+                        'user2':[0, 1, 0],
+                        'user3':[1, 1, 0]
+                    }
+                }
+            },
+            1,
+            ['a' * 31]
+        ),
     ], ids=[
         'single-sheet-1',
         'forbidden-symbol-1',
@@ -252,7 +266,8 @@ def test_instantiation(generate_writer, folder_path, expected_type):
         'forbidden-symbol-5',
         'forbidden-symbol-6',
         'forbidden-symbol-7',
-        'two-forbidden-symbols-1'
+        'two-forbidden-symbols-1',
+        'a-too-large-name-for-a-sheet-1'
     ]
 )
 def test_excel_writing(generate_writer, inputs, sheets_count, sheets_names):

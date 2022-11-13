@@ -70,7 +70,8 @@ class OpenxlpyWriter(AbstractWriter):
         self.workbook.remove(self.workbook.worksheets[0])
         for index, sheet in enumerate(self._input):
             clean_name: str = self._clear_sheet_name(sheet)
-            unique_name: str = self._generate_worksheet_name(clean_name, self.workbook.sheetnames)
+            #A sheet's name have a maximum of 31 characters:
+            unique_name: str = self._generate_worksheet_name(clean_name[-31:], self.workbook.sheetnames)
             current_sheet: Worksheet = self.workbook.create_sheet(title=unique_name, index=index)
 
     def save(self, filename: str) -> None:
@@ -115,6 +116,7 @@ class OpenxlpyWriter(AbstractWriter):
         - Avoid potential name duplications:
             if 'sheet' already exists, 'sheet' -> 'sheet_1'
             if 'sheet_1' already exists, 'sheet_1' -> 'sheet_2'
+        - Proper name is found recursively
         """
         if name.lower() not in current_sheets:
             return name.lower()
