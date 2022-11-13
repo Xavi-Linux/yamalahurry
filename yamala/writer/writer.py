@@ -40,10 +40,10 @@ class AbstractWriter(abc.ABC):
 
 class OpenxlpyWriter(AbstractWriter):
 
-    def __init__(self,folderpath: PathLikeObj):
+    def __init__(self, folderpath: PathLikeObj):
         AbstractWriter.__init__(self, folderpath)
-        self.workbook = Workbook()
-        self._input = None
+        self.workbook: Workbook = Workbook()
+        self._input: Union[None, Dict[str, Dict[str, Union[Dict, List]]]] = None
 
     def process(self, inputs: Dict[str, Dict[str, Union[Dict, List]]]) -> None:
         """
