@@ -3,8 +3,9 @@ Module for Writer classes
 """
 import abc
 from openpyxl.workbook.workbook import Workbook
+from openpyxl.worksheet.worksheet import Worksheet
 from pathlib import Path
-from typing import Dict, Iterable, Iterator, List, Union, TypeVar
+from typing import Dict, Iterable, Iterator, List, Union, Tuple, TypeVar
 
 PathLikeObj = TypeVar('PathLikeObj', str, Path)
 
@@ -65,6 +66,13 @@ class OpenxlpyWriter(AbstractWriter):
 
         self._validate_input()
 
+        #By default, a workbook instance holds a worksheet called 'Sheet'
+        self.workbook.remove(self.workbook.worksheets[0])
+        for index, sheet in enumerate(self._input):
+            clean_name: str = self._clear_sheet_name(sheet)
+            unique_name: str = self._generate_worksheet_name(clean_name, self.workbook.sheetnames)
+            current_sheet: Worksheet = self.workbook.create_sheet(title=unique_name, index=index)
+
     def save(self, filename: str) -> None:
         pass
 
@@ -100,3 +108,29 @@ class OpenxlpyWriter(AbstractWriter):
                         return None
 
         raise WrongInputStructure(self.process.__doc__)
+
+    @staticmethod
+    def _generate_worksheet_name(name: str, current_sheets: List[str], recursion_level: int = 1) -> str:
+        """
+        - Avoid potential name duplications:
+            if 'sheet' already exists, 'sheet' -> 'sheet_1'
+            if 'sheet_1' already exists, 'sheet_1' -> 'sheet_2'
+        """
+        if name.lower() not in current_sheets:
+            return name.lower()
+
+        else:
+            return OpenxlpyWriter._generate_worksheet_name(
+                                        name.lower() + '_' + str(recursion_level),
+                                        current_sheets,
+                                        recursion_level + 1
+            )
+
+    @staticmethod
+    def _clear_sheet_name(name: str) -> str:
+        forbidden_symbols: Tuple = ('\\', '/', '*', '[', ']', ':', '?')
+        replacer: str = '_'
+        for symbol in forbidden_symbols:
+            name = name.replace(symbol, replacer)
+
+        return name

@@ -18,6 +18,7 @@ def generate_writer(make_folder):
     return OpenxlpyWriter(make_folder)
 
 
+# ### Happy path
 @pytest.mark.parametrize(
     ('folder_path', 'expected_type'),
     [
@@ -39,6 +40,225 @@ def test_instantiation(generate_writer, folder_path, expected_type):
         folder_path = Path(folder_path)
     assert folder_path == writer.folderpath
     assert hasattr(writer, 'workbook')
+
+
+@pytest.mark.parametrize(
+    ('inputs', 'sheets_count', 'sheets_names'),
+    [
+        (#Test 1
+            {
+                'roles':{
+                    'rows':['reader', 'editor', 'creator'],
+                    'columns':{
+                        'user1':[1, 0, 0],
+                        'user2':[0, 1, 0],
+                        'user3':[1, 1, 0]
+                    }
+                }
+            },
+            1,
+            ['roles']
+        ),
+        (#Test 2
+            {
+                'roles':{
+                    'rows':['reader', 'editor', 'creator'],
+                    'columns':{
+                        'user1':[1, 0, 0],
+                        'user2':[0, 1, 0],
+                        'user3':[1, 1, 0]
+                    }
+                },
+                'ro\les':{
+                    'rows':['reader', 'editor', 'creator'],
+                    'columns':{
+                        'user1':[1, 0, 0],
+                        'user2':[0, 1, 0],
+                        'user3':[1, 1, 0]
+                    }
+                },
+            },
+            2,
+            ['roles', 'ro_les']
+        ),
+        (#Test 3
+            {
+                'roles':{
+                    'rows':['reader', 'editor', 'creator'],
+                    'columns':{
+                        'user1':[1, 0, 0],
+                        'user2':[0, 1, 0],
+                        'user3':[1, 1, 0]
+                    }
+                },
+                'ro/les':{
+                    'rows':['reader', 'editor', 'creator'],
+                    'columns':{
+                        'user1':[1, 0, 0],
+                        'user2':[0, 1, 0],
+                        'user3':[1, 1, 0]
+                    }
+                },
+            },
+            2,
+            ['roles', 'ro_les']
+        ),
+        (#Test 4
+            {
+                'roles':{
+                    'rows':['reader', 'editor', 'creator'],
+                    'columns':{
+                        'user1':[1, 0, 0],
+                        'user2':[0, 1, 0],
+                        'user3':[1, 1, 0]
+                    }
+                },
+                'ro*les':{
+                    'rows':['reader', 'editor', 'creator'],
+                    'columns':{
+                        'user1':[1, 0, 0],
+                        'user2':[0, 1, 0],
+                        'user3':[1, 1, 0]
+                    }
+                },
+            },
+            2,
+            ['roles', 'ro_les']
+        ),
+        (#Test 5
+            {
+                'roles':{
+                    'rows':['reader', 'editor', 'creator'],
+                    'columns':{
+                        'user1':[1, 0, 0],
+                        'user2':[0, 1, 0],
+                        'user3':[1, 1, 0]
+                    }
+                },
+                'ro[les':{
+                    'rows':['reader', 'editor', 'creator'],
+                    'columns':{
+                        'user1':[1, 0, 0],
+                        'user2':[0, 1, 0],
+                        'user3':[1, 1, 0]
+                    }
+                },
+            },
+            2,
+            ['roles', 'ro_les']
+        ),
+        (#Test 6
+            {
+                'roles':{
+                    'rows':['reader', 'editor', 'creator'],
+                    'columns':{
+                        'user1':[1, 0, 0],
+                        'user2':[0, 1, 0],
+                        'user3':[1, 1, 0]
+                    }
+                },
+                'ro]les':{
+                    'rows':['reader', 'editor', 'creator'],
+                    'columns':{
+                        'user1':[1, 0, 0],
+                        'user2':[0, 1, 0],
+                        'user3':[1, 1, 0]
+                    }
+                },
+            },
+            2,
+            ['roles', 'ro_les']
+        ),
+        (#Test 7
+            {
+                'roles':{
+                    'rows':['reader', 'editor', 'creator'],
+                    'columns':{
+                        'user1':[1, 0, 0],
+                        'user2':[0, 1, 0],
+                        'user3':[1, 1, 0]
+                    }
+                },
+                'ro:les':{
+                    'rows':['reader', 'editor', 'creator'],
+                    'columns':{
+                        'user1':[1, 0, 0],
+                        'user2':[0, 1, 0],
+                        'user3':[1, 1, 0]
+                    }
+                },
+            },
+            2,
+            ['roles', 'ro_les']
+        ),
+        (#Test 8
+            {
+                'roles':{
+                    'rows':['reader', 'editor', 'creator'],
+                    'columns':{
+                        'user1':[1, 0, 0],
+                        'user2':[0, 1, 0],
+                        'user3':[1, 1, 0]
+                    }
+                },
+                'ro?les':{
+                    'rows':['reader', 'editor', 'creator'],
+                    'columns':{
+                        'user1':[1, 0, 0],
+                        'user2':[0, 1, 0],
+                        'user3':[1, 1, 0]
+                    }
+                },
+            },
+            2,
+            ['roles', 'ro_les']
+        ),
+        (#Test 9
+            {
+                'roles':{
+                    'rows':['reader', 'editor', 'creator'],
+                    'columns':{
+                        'user1':[1, 0, 0],
+                        'user2':[0, 1, 0],
+                        'user3':[1, 1, 0]
+                    }
+                },
+                'ro?les':{
+                    'rows':['reader', 'editor', 'creator'],
+                    'columns':{
+                        'user1':[1, 0, 0],
+                        'user2':[0, 1, 0],
+                        'user3':[1, 1, 0]
+                    }
+                },
+                'ro[les':{
+                    'rows':['reader', 'editor', 'creator'],
+                    'columns':{
+                        'user1':[1, 0, 0],
+                        'user2':[0, 1, 0],
+                        'user3':[1, 1, 0]
+                    }
+                },
+            },
+            3,
+            ['roles', 'ro_les', 'ro_les_1']
+        )
+    ], ids=[
+        'single-sheet-1',
+        'forbidden-symbol-1',
+        'forbidden-symbol-2',
+        'forbidden-symbol-3',
+        'forbidden-symbol-4',
+        'forbidden-symbol-5',
+        'forbidden-symbol-6',
+        'forbidden-symbol-7',
+        'two-forbidden-symbols-1'
+    ]
+)
+def test_excel_writing(generate_writer, inputs, sheets_count, sheets_names):
+    generate_writer.process(inputs)
+    assert sheets_count == len(generate_writer.workbook.worksheets)
+    assert sheets_names == generate_writer.workbook.sheetnames
 
 
 # ### Sad path
@@ -273,3 +493,5 @@ def test_wrong_input(generate_writer, inputs, expected):
     with pytest.raises(WrongInputStructure) as exp:
         generate_writer.process(input)
     assert expected == exp.value.args[0]
+
+
