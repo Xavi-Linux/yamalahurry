@@ -10,7 +10,8 @@ from yamalahurry.yamala.writer import OpenxlpyWriter, WrongInputStructure
 @pytest.fixture
 def make_folder(tmp_path):
     folder = tmp_path / 'tests'
-    return folder.mkdir()
+    folder.mkdir()
+    return folder
 
 
 @pytest.fixture
@@ -69,7 +70,7 @@ def test_instantiation(generate_writer, folder_path, expected_type):
                         'user3':[1, 1, 0]
                     }
                 },
-                'ro\les':{
+                'ro\\les':{
                     'rows':['reader', 'editor', 'creator'],
                     'columns':{
                         'user1':[1, 0, 0],
@@ -270,10 +271,135 @@ def test_instantiation(generate_writer, folder_path, expected_type):
         'a-too-large-name-for-a-sheet-1'
     ]
 )
-def test_excel_writing(generate_writer, inputs, sheets_count, sheets_names):
+def test_excel_sheet_creation(generate_writer, inputs, sheets_count, sheets_names):
     generate_writer.process(inputs)
     assert sheets_count == len(generate_writer.workbook.worksheets)
     assert sheets_names == generate_writer.workbook.sheetnames
+
+
+@pytest.mark.parametrize(
+    ('inputs', 'expected'),
+    [
+        (#Test 1
+            'file',
+            'file'
+        ),
+        (#Test 2
+            'file' + chr(10),
+            'file_'
+        ),
+        (#Test 3
+            'file' + chr(13),
+            'file_'
+        ),
+        (#Test 4
+            'file' + '~',
+            'file_'
+        ),
+        (#Test 5
+            'file' + '"',
+            'file_'
+        ),
+        (#Test 6
+            'file' + '#',
+            'file_'
+        ),
+        (#Test 7
+            'file' + '%',
+            'file_'
+        ),
+        (#Test 8
+            'file' + '&',
+            'file_'
+        ),
+        (#Test 9
+            'file' + '*',
+            'file_'
+        ),
+        (#Test 10
+            'file' + ':',
+            'file_'
+        ),
+        (#Test 11
+            'file' + '<',
+            'file_'
+        ),
+        (#Test 12
+            'file' + '>',
+            'file_'
+        ),
+        (#Test 13
+            'file' + '?',
+            'file_'
+        ),
+        (#Test 14
+            'file' + '{',
+            'file_'
+        ),
+        (#Test 15
+            'file' + '|',
+            'file_'
+        ),
+        (#Test 16
+            'file' + '}',
+            'file_'
+        ),
+        (#Test 17
+            'file' + '/',
+            'file_'
+        ),
+        (#Test 18
+            'file' + '\\',
+            'file_'
+        ),
+        (#Test 19
+            'file' + '[',
+            'file_'
+        ),
+        (#Test 4
+            'file' + ']',
+            'file_'
+        )
+    ], ids=[
+        'simple-file-1',
+        'forbidden-char-1',
+        'forbidden-char-2',
+        'forbidden-char-3',
+        'forbidden-char-4',
+        'forbidden-char-5',
+        'forbidden-char-6',
+        'forbidden-char-7',
+        'forbidden-char-8',
+        'forbidden-char-9',
+        'forbidden-char-10',
+        'forbidden-char-11',
+        'forbidden-char-12',
+        'forbidden-char-13',
+        'forbidden-char-14',
+        'forbidden-char-15',
+        'forbidden-char-16',
+        'forbidden-char-17',
+        'forbidden-char-18',
+        'forbidden-char-19'
+    ]
+)
+def test_excel_save(generate_writer, inputs, expected):
+    content = {
+                'roles':{
+                    'rows':['reader', 'editor', 'creator'],
+                    'columns':{
+                        'user1':[1, 0, 0],
+                        'user2':[0, 1, 0],
+                        'user3':[1, 1, 0]
+                    }
+                }
+    }
+
+    generate_writer.process(content)
+    generate_writer.save(inputs)
+    final_file = expected + '.xlsx'
+    assert (generate_writer.folderpath / final_file).exists()
+    assert '.xlsx' == (generate_writer.folderpath / final_file).suffix
 
 
 # ### Sad path
@@ -508,5 +634,3 @@ def test_wrong_input(generate_writer, inputs, expected):
     with pytest.raises(WrongInputStructure) as exp:
         generate_writer.process(input)
     assert expected == exp.value.args[0]
-
-

@@ -75,7 +75,9 @@ class OpenxlpyWriter(AbstractWriter):
             current_sheet: Worksheet = self.workbook.create_sheet(title=unique_name, index=index)
 
     def save(self, filename: str) -> None:
-        pass
+        filename: str = self._clear_file_name(filename)
+        final_path: Path = self.folderpath / filename
+        self.workbook.save(final_path.with_suffix('.xlsx'))
 
     def _validate_input(self) -> None:
         if isinstance(self._input, Dict):
@@ -134,5 +136,16 @@ class OpenxlpyWriter(AbstractWriter):
         replacer: str = '_'
         for symbol in forbidden_symbols:
             name = name.replace(symbol, replacer)
+
+        return name
+
+    @staticmethod
+    def _clear_file_name(name: str) -> str:
+        illegal_values: Tuple = (
+                        chr(10), chr(13), '~', '"', '#', '%', '&', '*', ':', '<',
+                        '>', '?', '{', '|', '}', '/','\\', '[', ']'
+        )
+        for value in illegal_values:
+            name = name.replace(value, '_')
 
         return name
