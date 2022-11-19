@@ -305,9 +305,130 @@ def test_excel_sheet_creation(generate_writer, inputs, sheets_count, sheets_name
                     [2, 'B', 0]
                 ]
             }
+        ),
+        (#Test 2
+            {
+                'types':{
+                    'rows':['squirtle', 'charmander', 'bulbasur', 'pikachu'],
+                    'columns':{
+                        'grass':[0, 0, 1, 0],
+                        'water':[1, 0, 0, 0],
+                        'fire':[0, 1, 0, 0],
+                        'electric':[0, 0, 0, 1],
+                        'iron':[0, 0, 0, 0]
+                    }
+                }
+            },
+            {
+                'types':[
+                    [2, 'A', 'squirtle'],
+                    [3, 'A', 'charmander'],
+                    [4, 'A', 'bulbasur'],
+                    [5, 'A', 'pikachu'],
+                    [1, 'B', 'grass'],
+                    [1, 'C', 'water'],
+                    [1, 'D', 'fire'],
+                    [1, 'E', 'electric'],
+                    [1, 'F', 'iron'],
+                    [2, 'B', 0],
+                    [3, 'B', 0],
+                    [4, 'B', 1],
+                    [5, 'B', 0],
+                    [2, 'C', 1],
+                    [3, 'C', 0],
+                    [4, 'C', 0],
+                    [5, 'C', 0],
+                    [2, 'D', 0],
+                    [3, 'D', 1],
+                    [4, 'D', 0],
+                    [5, 'D', 0],
+                    [2, 'E', 0],
+                    [3, 'E', 0],
+                    [4, 'E', 0],
+                    [5, 'E', 1],
+                    [2, 'F', 0],
+                    [3, 'F', 0],
+                    [4, 'F', 0],
+                    [5, 'F', 0],
+                ]
+            }
+        ),
+        (#Test 3
+            {
+                'types':{
+                    'rows':['squirtle', 'charmander', 'bulbasur', 'pikachu'],
+                    'columns':{
+                        'grass':[0, 0, 1, 0],
+                        'water':[1, 0, 0, 0],
+                        'fire':[0, 1, 0, 0],
+                        'electric':[0, 0, 0, 1],
+                        'iron':[0, 0, 0, 0]
+                    }
+                },
+                'attacks':{
+                    'rows': ['fire', 'electric', 'normal'],
+                    'columns': {
+                        'ember':[1, 0, 0],
+                        'spark':[0, 1, 0],
+                        'calm mind':[0, 0, 0]
+                    }
+                }
+            },
+            {
+                'types':[
+                    [2, 'A', 'squirtle'],
+                    [3, 'A', 'charmander'],
+                    [4, 'A', 'bulbasur'],
+                    [5, 'A', 'pikachu'],
+                    [1, 'B', 'grass'],
+                    [1, 'C', 'water'],
+                    [1, 'D', 'fire'],
+                    [1, 'E', 'electric'],
+                    [1, 'F','iron'],
+                    [2, 'B', 0],
+                    [3, 'B', 0],
+                    [4, 'B', 1],
+                    [5, 'B', 0],
+                    [2, 'C', 1],
+                    [3, 'C', 0],
+                    [4, 'C', 0],
+                    [5, 'C', 0],
+                    [2, 'D', 0],
+                    [3, 'D', 1],
+                    [4, 'D', 0],
+                    [5, 'D', 0],
+                    [2, 'E', 0],
+                    [3, 'E', 0],
+                    [4, 'E', 0],
+                    [5, 'E', 1],
+                    [2, 'F', 0],
+                    [3, 'F', 0],
+                    [4, 'F', 0],
+                    [5, 'F', 0],
+                ],
+                'attacks': [
+                    [2, 'A', 'fire'],
+                    [3, 'A', 'electric'],
+                    [4, 'A', 'normal'],
+                    [1, 'B', 'ember'],
+                    [1, 'C', 'spark'],
+                    [1, 'D', 'calm mind'],
+                    [2, 'B', 1],
+                    [3, 'B', 0],
+                    [4, 'B', 0],
+                    [2, 'C', 0],
+                    [3, 'C', 1],
+                    [4, 'C', 0],
+                    [2, 'D', 0],
+                    [3, 'D', 0],
+                    [4, 'D', 0]
+                ]
+            }
         )
     ], ids=[
-        'one-sheet-one-row-one-col-1'
+        'one-sheet-one-row-one-col-1',
+        'one-sheet-multiple-rows-multiple-cols-1',
+        'two-sheets-multiple-rows-multiple-cols-1'
     ]
 )
 def test_excel_content(generate_writer, inputs, expected):
