@@ -2,6 +2,7 @@
 Test file for the Writer Classes
 """
 import pytest
+from openpyxl.worksheet.worksheet import Worksheet
 from pathlib import Path
 
 from yamalahurry.yamala.writer import OpenxlpyWriter, WrongInputStructure
@@ -283,6 +284,42 @@ def test_excel_sheet_creation(generate_writer, inputs, sheets_count, sheets_name
     generate_writer.process(inputs)
     assert sheets_count == len(generate_writer.workbook.worksheets)
     assert sheets_names == generate_writer.workbook.sheetnames
+
+
+@pytest.mark.parametrize(
+    ('inputs', 'expected'),
+    [
+        (#Test 1
+            {
+                'types':{
+                    'rows':['squirtle'],
+                    'columns':{
+                        'grass':[0]
+                    }
+                }
+            },
+            {
+                'types': [
+                    [2, 'A', 'squirtle'],
+                    [1, 'B', 'grass'],
+                    [2, 'B', 0]
+                ]
+            }
+        )
+    ], ids=[
+        'one-sheet-one-row-one-col-1'
+    ]
+)
+def test_excel_content(generate_writer, inputs, expected):
+    """
+    Test whether information is placed in the right cells
+    """
+    generate_writer.process(inputs)
+    for sheet in expected:
+        ws:Worksheet = generate_writer.workbook.get_sheet_by_name(sheet)
+        for cells in expected[sheet]:
+            cell_ref: str = cells[1] + str(cells[0])
+            assert ws[cell_ref].value == cells[2]
 
 
 @pytest.mark.parametrize(

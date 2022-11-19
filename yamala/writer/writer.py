@@ -73,6 +73,16 @@ class OpenxlpyWriter(AbstractWriter):
             #A sheet's name have a maximum of 31 characters:
             unique_name: str = self._generate_worksheet_name(clean_name[-31:], self.workbook.sheetnames)
             current_sheet: Worksheet = self.workbook.create_sheet(title=unique_name, index=index)
+            #Build vertical axis
+            for row_number, row_content in enumerate(self._input[sheet]['rows'], start=2):
+                current_sheet.cell(row_number, 1, row_content)
+
+            #Build columns' headers and content
+            for col_number, header in enumerate(self._input[sheet]['columns'], start=2):
+                #Header
+                current_sheet.cell(1, col_number, header)
+                for row, row_content in enumerate(self._input[sheet]['columns'][header], start=2):
+                    current_sheet.cell(row, col_number, row_content)
 
     def save(self, filename: str) -> None:
         filename: str = self._clear_file_name(filename)
