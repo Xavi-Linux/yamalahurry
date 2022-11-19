@@ -35,6 +35,9 @@ def generate_writer(make_folder):
     ]
 )
 def test_instantiation(generate_writer, folder_path, expected_type):
+    """
+    Test to determine whether the construstor's arguments are properly parsed
+    """
     writer = OpenxlpyWriter(folder_path)
     assert isinstance(writer.folderpath, expected_type)
     if isinstance(folder_path, str):
@@ -272,6 +275,11 @@ def test_instantiation(generate_writer, folder_path, expected_type):
     ]
 )
 def test_excel_sheet_creation(generate_writer, inputs, sheets_count, sheets_names):
+    """
+    Test to determine whether the parsed content's structure is correct and the correct
+    number of sheets is created. It also tests the handling of edge cases when naming sheets
+    (sheet name's length and usage of forbidden symbols).
+    """
     generate_writer.process(inputs)
     assert sheets_count == len(generate_writer.workbook.worksheets)
     assert sheets_names == generate_writer.workbook.sheetnames
@@ -384,6 +392,10 @@ def test_excel_sheet_creation(generate_writer, inputs, sheets_count, sheets_name
     ]
 )
 def test_excel_save(generate_writer, inputs, expected):
+    """
+    Test if the final spreadsheet can be persisted and
+    handles bad naming (use of forbidden symbols)
+    """
     content = {
                 'roles':{
                     'rows':['reader', 'editor', 'creator'],
@@ -631,6 +643,10 @@ def test_excel_save(generate_writer, inputs, expected):
     ]
 )
 def test_wrong_input(generate_writer, inputs, expected):
+    """
+    Check whether the code raises error when a writer
+    receives a wrong input data structure
+    """
     with pytest.raises(WrongInputStructure) as exp:
-        generate_writer.process(input)
+        generate_writer.process(inputs)
     assert expected == exp.value.args[0]
