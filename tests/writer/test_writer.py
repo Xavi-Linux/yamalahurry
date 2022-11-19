@@ -784,6 +784,9 @@ def test_wrong_input(generate_writer, inputs, expected):
 
 @pytest.mark.skip
 def test_full_flow():
+    """
+    Test the full flow and generate an actual Excel file, so that it can be visually inspected
+    """
     target_folder: str = '/home/xavi/Documents/Pynotes/yamalaHarris/yamalahurry/yamala/output'
     writer = OpenxlpyWriter(target_folder)
     writer.process(_CONSOLIDATED_INPUT)
