@@ -4,8 +4,90 @@ Test file for the Writer Classes
 import pytest
 from openpyxl.worksheet.worksheet import Worksheet
 from pathlib import Path
+from typing import Dict
 
 from yamalahurry.yamala.writer import OpenxlpyWriter, WrongInputStructure
+
+_INPUT_ONE: Dict = {
+                    'types':{
+                        'rows':['squirtle', 'charmander', 'bulbasur', 'pikachu'],
+                        'columns':{
+                            'grass':[0, 0, 1, 0],
+                            'water':[1, 0, 0, 0],
+                            'fire':[0, 1, 0, 0],
+                            'electric':[0, 0, 0, 1],
+                            'iron':[0, 0, 0, 0]
+                        }
+                    }
+}
+_OUTPUT_ONE: Dict = {
+                    'types':[
+                        [2, 'A', 'squirtle'],
+                        [3, 'A', 'charmander'],
+                        [4, 'A', 'bulbasur'],
+                        [5, 'A', 'pikachu'],
+                        [1, 'B', 'grass'],
+                        [1, 'C', 'water'],
+                        [1, 'D', 'fire'],
+                        [1, 'E', 'electric'],
+                        [1, 'F', 'iron'],
+                        [2, 'B', 0],
+                        [3, 'B', 0],
+                        [4, 'B', 1],
+                        [5, 'B', 0],
+                        [2, 'C', 1],
+                        [3, 'C', 0],
+                        [4, 'C', 0],
+                        [5, 'C', 0],
+                        [2, 'D', 0],
+                        [3, 'D', 1],
+                        [4, 'D', 0],
+                        [5, 'D', 0],
+                        [2, 'E', 0],
+                        [3, 'E', 0],
+                        [4, 'E', 0],
+                        [5, 'E', 1],
+                        [2, 'F', 0],
+                        [3, 'F', 0],
+                        [4, 'F', 0],
+                        [5, 'F', 0],
+                    ]
+}
+_INPUT_TWO: Dict = {
+                    'attacks':{
+                        'rows': ['fire', 'electric', 'normal'],
+                        'columns': {
+                            'ember':[1, 0, 0],
+                            'spark':[0, 1, 0],
+                            'calm mind':[0, 0, 0]
+                        }
+                    }
+}
+_OUTPUT_TWO: Dict = {
+                        'attacks': [
+                            [2, 'A', 'fire'],
+                            [3, 'A', 'electric'],
+                            [4, 'A', 'normal'],
+                            [1, 'B', 'ember'],
+                            [1, 'C', 'spark'],
+                            [1, 'D', 'calm mind'],
+                            [2, 'B', 1],
+                            [3, 'B', 0],
+                            [4, 'B', 0],
+                            [2, 'C', 0],
+                            [3, 'C', 1],
+                            [4, 'C', 0],
+                            [2, 'D', 0],
+                            [3, 'D', 0],
+                            [4, 'D', 0]
+                        ]
+}
+
+_CONSOLIDATED_INPUT: Dict = _INPUT_ONE.copy()
+_CONSOLIDATED_INPUT.update(_INPUT_TWO)
+
+_CONSOLIDATED_OUTPUT: Dict = _OUTPUT_ONE.copy()
+_CONSOLIDATED_OUTPUT.update(_OUTPUT_TWO)
 
 
 @pytest.fixture
@@ -307,123 +389,12 @@ def test_excel_sheet_creation(generate_writer, inputs, sheets_count, sheets_name
             }
         ),
         (#Test 2
-            {
-                'types':{
-                    'rows':['squirtle', 'charmander', 'bulbasur', 'pikachu'],
-                    'columns':{
-                        'grass':[0, 0, 1, 0],
-                        'water':[1, 0, 0, 0],
-                        'fire':[0, 1, 0, 0],
-                        'electric':[0, 0, 0, 1],
-                        'iron':[0, 0, 0, 0]
-                    }
-                }
-            },
-            {
-                'types':[
-                    [2, 'A', 'squirtle'],
-                    [3, 'A', 'charmander'],
-                    [4, 'A', 'bulbasur'],
-                    [5, 'A', 'pikachu'],
-                    [1, 'B', 'grass'],
-                    [1, 'C', 'water'],
-                    [1, 'D', 'fire'],
-                    [1, 'E', 'electric'],
-                    [1, 'F', 'iron'],
-                    [2, 'B', 0],
-                    [3, 'B', 0],
-                    [4, 'B', 1],
-                    [5, 'B', 0],
-                    [2, 'C', 1],
-                    [3, 'C', 0],
-                    [4, 'C', 0],
-                    [5, 'C', 0],
-                    [2, 'D', 0],
-                    [3, 'D', 1],
-                    [4, 'D', 0],
-                    [5, 'D', 0],
-                    [2, 'E', 0],
-                    [3, 'E', 0],
-                    [4, 'E', 0],
-                    [5, 'E', 1],
-                    [2, 'F', 0],
-                    [3, 'F', 0],
-                    [4, 'F', 0],
-                    [5, 'F', 0],
-                ]
-            }
+            _INPUT_ONE,
+            _OUTPUT_ONE
         ),
         (#Test 3
-            {
-                'types':{
-                    'rows':['squirtle', 'charmander', 'bulbasur', 'pikachu'],
-                    'columns':{
-                        'grass':[0, 0, 1, 0],
-                        'water':[1, 0, 0, 0],
-                        'fire':[0, 1, 0, 0],
-                        'electric':[0, 0, 0, 1],
-                        'iron':[0, 0, 0, 0]
-                    }
-                },
-                'attacks':{
-                    'rows': ['fire', 'electric', 'normal'],
-                    'columns': {
-                        'ember':[1, 0, 0],
-                        'spark':[0, 1, 0],
-                        'calm mind':[0, 0, 0]
-                    }
-                }
-            },
-            {
-                'types':[
-                    [2, 'A', 'squirtle'],
-                    [3, 'A', 'charmander'],
-                    [4, 'A', 'bulbasur'],
-                    [5, 'A', 'pikachu'],
-                    [1, 'B', 'grass'],
-                    [1, 'C', 'water'],
-                    [1, 'D', 'fire'],
-                    [1, 'E', 'electric'],
-                    [1, 'F','iron'],
-                    [2, 'B', 0],
-                    [3, 'B', 0],
-                    [4, 'B', 1],
-                    [5, 'B', 0],
-                    [2, 'C', 1],
-                    [3, 'C', 0],
-                    [4, 'C', 0],
-                    [5, 'C', 0],
-                    [2, 'D', 0],
-                    [3, 'D', 1],
-                    [4, 'D', 0],
-                    [5, 'D', 0],
-                    [2, 'E', 0],
-                    [3, 'E', 0],
-                    [4, 'E', 0],
-                    [5, 'E', 1],
-                    [2, 'F', 0],
-                    [3, 'F', 0],
-                    [4, 'F', 0],
-                    [5, 'F', 0],
-                ],
-                'attacks': [
-                    [2, 'A', 'fire'],
-                    [3, 'A', 'electric'],
-                    [4, 'A', 'normal'],
-                    [1, 'B', 'ember'],
-                    [1, 'C', 'spark'],
-                    [1, 'D', 'calm mind'],
-                    [2, 'B', 1],
-                    [3, 'B', 0],
-                    [4, 'B', 0],
-                    [2, 'C', 0],
-                    [3, 'C', 1],
-                    [4, 'C', 0],
-                    [2, 'D', 0],
-                    [3, 'D', 0],
-                    [4, 'D', 0]
-                ]
-            }
+            _CONSOLIDATED_INPUT,
+            _CONSOLIDATED_OUTPUT
         )
     ], ids=[
         'one-sheet-one-row-one-col-1',
@@ -435,6 +406,7 @@ def test_excel_content(generate_writer, inputs, expected):
     """
     Test whether information is placed in the right cells
     """
+    print(inputs)
     generate_writer.process(inputs)
     for sheet in expected:
         ws:Worksheet = generate_writer.workbook.get_sheet_by_name(sheet)
@@ -808,3 +780,12 @@ def test_wrong_input(generate_writer, inputs, expected):
     with pytest.raises(WrongInputStructure) as exp:
         generate_writer.process(inputs)
     assert expected == exp.value.args[0]
+
+
+@pytest.mark.skip
+def test_full_flow():
+    target_folder: str = '/home/xavi/Documents/Pynotes/yamalaHarris/yamalahurry/yamala/output'
+    writer = OpenxlpyWriter(target_folder)
+    writer.process(_CONSOLIDATED_INPUT)
+    writer.save('test_1.xlsx')
+    assert True
