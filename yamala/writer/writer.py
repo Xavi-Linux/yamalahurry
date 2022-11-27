@@ -2,12 +2,56 @@
 Module for Writer classes
 """
 import abc
+from openpyxl.styles import Font
+from openpyxl.utils import column_index_from_string
 from openpyxl.workbook.workbook import Workbook
 from openpyxl.worksheet.worksheet import Worksheet
 from pathlib import Path
 from typing import Dict, Iterable, Iterator, List, Union, Tuple, TypeVar
 
 PathLikeObj = TypeVar('PathLikeObj', str, Path)
+
+
+class ConditionalTableStyle:
+
+    def __init__(self, anchor:str, row_header=True):
+        self._anchor_column: int = column_index_from_string(anchor)
+        self._anchor_row: int = self._get_row_int(anchor)
+        self._anchor = anchor
+        self.row_header = row_header
+        self.font_style = Font(bold=True)
+
+    @property
+    def anchor(self) -> str:
+        return self._anchor
+
+    @anchor.setter
+    def anchor(self, value: str) -> None:
+        self._anchor_column = column_index_from_string(value)
+        self._anchor_row = self._get_row_int(value)
+        self._anchor = value
+
+    def apply(self, sheet: Worksheet, max_row: int, max_column:int) -> None:
+        for col_num in range(self._anchor_column, max_column + 1):
+            sheet.cell(self._anchor_row, col_num).font = self.font_style
+
+        if self.row_header:
+            for row_num in range(self._anchor_row, max_row + 1):
+                sheet.cell(row_num, self._anchor_column).font = self.font_style
+
+    @staticmethod
+    def _get_row_int(cell_ref: str) -> int:
+        row_substring: str = ''
+        for character in cell_ref:
+            try:
+
+                if isinstance(int(character), int):
+                    row_substring += character
+
+            except ValueError:
+                pass
+
+        return int(row_substring)
 
 
 class WrongInputStructure(Exception):
@@ -45,6 +89,7 @@ class OpenxlpyWriter(AbstractWriter):
         AbstractWriter.__init__(self, folderpath)
         self.workbook: Workbook = Workbook()
         self._input: Union[None, Dict[str, Dict[str, Union[Dict, List]]]] = None
+        self._style: ConditionalTableStyle = ConditionalTableStyle(anchor='A1', row_header=True)
 
     def process(self, inputs: Dict[str, Dict[str, Union[Dict, List]]]) -> None:
         """

@@ -402,7 +402,7 @@ def test_excel_sheet_creation(generate_writer, inputs, sheets_count, sheets_name
         'two-sheets-multiple-rows-multiple-cols-1'
     ]
 )
-def test_excel_content(generate_writer, inputs, expected):
+def test_excel_content_and_style(generate_writer, inputs, expected):
     """
     Test whether information is placed in the right cells
     """
@@ -413,6 +413,12 @@ def test_excel_content(generate_writer, inputs, expected):
         for cells in expected[sheet]:
             cell_ref: str = cells[1] + str(cells[0])
             assert ws[cell_ref].value == cells[2]
+
+            if ws[cell_ref].column == 1 or ws[cell_ref].row == 1:
+                assert ws[cell_ref].font.bold
+
+            else:
+                assert not ws[cell_ref].font.bold
 
 
 @pytest.mark.parametrize(
