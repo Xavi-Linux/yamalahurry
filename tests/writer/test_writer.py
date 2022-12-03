@@ -412,10 +412,18 @@ def test_excel_content_and_style(generate_writer, inputs, expected):
         ws:Worksheet = generate_writer.workbook.get_sheet_by_name(sheet)
         for cells in expected[sheet]:
             cell_ref: str = cells[1] + str(cells[0])
+            #Content assertion:
             assert ws[cell_ref].value == cells[2]
 
+            #Style assertions
             if ws[cell_ref].column == 1 or ws[cell_ref].row == 1:
                 assert ws[cell_ref].font.bold
+
+                if ws[cell_ref].column == 1:
+                    assert ws[cell_ref].alignment.horizontal == 'left'
+
+                if ws[cell_ref].row == 1 and ws[cell_ref].column > 1:
+                    assert ws[cell_ref].alignment.horizontal == 'center'
 
             else:
                 assert not ws[cell_ref].font.bold

@@ -2,7 +2,7 @@
 Module for Writer classes
 """
 import abc
-from openpyxl.styles import Font
+from openpyxl.styles import Font, Alignment
 from openpyxl.utils import column_index_from_string
 from openpyxl.workbook.workbook import Workbook
 from openpyxl.worksheet.worksheet import Worksheet
@@ -14,12 +14,14 @@ PathLikeObj = TypeVar('PathLikeObj', str, Path)
 
 class ConditionalTableStyle:
 
-    def __init__(self, anchor:str, row_header=True):
+    def __init__(self, anchor:str, row_header: bool = True):
         self._anchor_column: int = column_index_from_string(self._get_column_text(anchor))
         self._anchor_row: int = self._get_row_int(anchor)
         self._anchor = anchor
         self.row_header = row_header
-        self.font_style = Font(bold=True)
+        self.font_style: Font = Font(bold=True)
+        self.row_header_alignment: Alignment = Alignment(horizontal='left')
+        self.column_header_alignment: Alignment = Alignment(horizontal='center')
 
     @property
     def anchor(self) -> str:
@@ -31,13 +33,15 @@ class ConditionalTableStyle:
         self._anchor_row = self._get_row_int(value)
         self._anchor = value
 
-    def apply(self, sheet: Worksheet, max_row: int, max_column:int) -> None:
+    def apply(self, sheet: Worksheet, max_row: int, max_column: int) -> None:
         for col_num in range(self._anchor_column, max_column + 1):
             sheet.cell(self._anchor_row, col_num).font = self.font_style
+            sheet.cell(self._anchor_row, col_num).alignment = self.column_header_alignment
 
         if self.row_header:
             for row_num in range(self._anchor_row, max_row + 1):
                 sheet.cell(row_num, self._anchor_column).font = self.font_style
+                sheet.cell(row_num, self._anchor_column).alignment = self.row_header_alignment
 
     @staticmethod
     def _get_row_int(cell_ref: str) -> int:
@@ -140,6 +144,8 @@ class OpenxlpyWriter(AbstractWriter):
                 current_sheet.cell(1, col_number, header)
                 for row, row_content in enumerate(self._input[sheet]['columns'][header], start=2):
                     current_sheet.cell(row, col_number, row_content)
+
+            self._style.apply(current_sheet, row_number, col_number)
 
     def save(self, filename: str) -> None:
         filename: str = self._clear_file_name(filename)
