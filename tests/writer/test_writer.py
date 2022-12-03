@@ -425,6 +425,9 @@ def test_excel_content_and_style(generate_writer, inputs, expected):
                 if ws[cell_ref].row == 1 and ws[cell_ref].column > 1:
                     assert ws[cell_ref].alignment.horizontal == 'center'
 
+                assert ws[cell_ref].fill.start_color.rgb == 'FFC0C0C0'
+                assert ws[cell_ref].fill.end_color.rgb =='FFC0C0C0'
+
             else:
                 assert not ws[cell_ref].font.bold
 
@@ -796,7 +799,7 @@ def test_wrong_input(generate_writer, inputs, expected):
     assert expected == exp.value.args[0]
 
 
-@pytest.mark.skip
+#@pytest.mark.skip
 def test_full_flow():
     """
     Test the full flow and generate an actual Excel file, so that it can be visually inspected
@@ -804,5 +807,5 @@ def test_full_flow():
     target_folder: str = '/home/xavi/Documents/Pynotes/yamalaHarris/yamalahurry/yamala/output'
     writer = OpenxlpyWriter(target_folder)
     writer.process(_CONSOLIDATED_INPUT)
-    writer.save('test_1.xlsx')
+    writer.save('test_7.xlsx')
     assert True

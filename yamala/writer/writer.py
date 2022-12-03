@@ -2,7 +2,7 @@
 Module for Writer classes
 """
 import abc
-from openpyxl.styles import Font, Alignment
+from openpyxl.styles import Alignment, Font, PatternFill
 from openpyxl.utils import column_index_from_string
 from openpyxl.workbook.workbook import Workbook
 from openpyxl.worksheet.worksheet import Worksheet
@@ -22,6 +22,16 @@ class ConditionalTableStyle:
         self.font_style: Font = Font(bold=True)
         self.row_header_alignment: Alignment = Alignment(horizontal='left')
         self.column_header_alignment: Alignment = Alignment(horizontal='center')
+        self.row_header_fill: PatternFill = PatternFill(
+            fill_type='solid',
+            start_color='FFC0C0C0',
+            end_color='FFC0C0C0'
+        )
+        self.column_header_fill: PatternFill = PatternFill(
+            fill_type='solid',
+            start_color='FFC0C0C0',
+            end_color='FFC0C0C0'
+        )
 
     @property
     def anchor(self) -> str:
@@ -37,11 +47,13 @@ class ConditionalTableStyle:
         for col_num in range(self._anchor_column, max_column + 1):
             sheet.cell(self._anchor_row, col_num).font = self.font_style
             sheet.cell(self._anchor_row, col_num).alignment = self.column_header_alignment
+            sheet.cell(self._anchor_row, col_num).fill = self.column_header_fill
 
         if self.row_header:
             for row_num in range(self._anchor_row, max_row + 1):
                 sheet.cell(row_num, self._anchor_column).font = self.font_style
                 sheet.cell(row_num, self._anchor_column).alignment = self.row_header_alignment
+                sheet.cell(row_num, self._anchor_column).fill = self.row_header_fill
 
     @staticmethod
     def _get_row_int(cell_ref: str) -> int:
