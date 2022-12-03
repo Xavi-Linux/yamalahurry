@@ -15,6 +15,8 @@ PathLikeObj = TypeVar('PathLikeObj', str, Path)
 
 class ConditionalTableStyle:
 
+    pixels_per_letter: float = 1.5
+
     def __init__(self, anchor:str, row_header: bool = True):
         self._anchor_column: int = column_index_from_string(self._get_column_text(anchor))
         self._anchor_row: int = self._get_row_int(anchor)
@@ -63,6 +65,9 @@ class ConditionalTableStyle:
             sheet.cell(self._anchor_row, col_num).font = self.font_style
             sheet.cell(self._anchor_row, col_num).alignment = self.column_header_alignment
             sheet.cell(self._anchor_row, col_num).fill = self.column_header_fill
+
+            #Enable column width autofit:
+            sheet.column_dimensions[get_column_letter(col_num)].bestFit = True
 
         if self.row_header:
             for row_num in range(self._anchor_row, max_row + 1):
