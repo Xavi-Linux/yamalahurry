@@ -27,7 +27,7 @@ class ConditionalTableStyle:
 
     @anchor.setter
     def anchor(self, value: str) -> None:
-        self._anchor_column = column_index_from_string(value)
+        self._anchor_column = column_index_from_string(self._get_column_text(value))
         self._anchor_row = self._get_row_int(value)
         self._anchor = value
 
