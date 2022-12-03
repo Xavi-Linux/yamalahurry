@@ -806,7 +806,7 @@ def test_wrong_input(generate_writer, inputs, expected):
     assert expected == exp.value.args[0]
 
 
-#@pytest.mark.skip
+@pytest.mark.skip
 def test_full_flow():
     """
     Test the full flow and generate an actual Excel file, so that it can be visually inspected
