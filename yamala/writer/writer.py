@@ -15,7 +15,7 @@ PathLikeObj = TypeVar('PathLikeObj', str, Path)
 class ConditionalTableStyle:
 
     def __init__(self, anchor:str, row_header=True):
-        self._anchor_column: int = column_index_from_string(anchor)
+        self._anchor_column: int = column_index_from_string(self._get_column_text(anchor))
         self._anchor_row: int = self._get_row_int(anchor)
         self._anchor = anchor
         self.row_header = row_header
@@ -52,6 +52,18 @@ class ConditionalTableStyle:
                 pass
 
         return int(row_substring)
+
+    @staticmethod
+    def _get_column_text(cell_ref: str) -> str:
+        column_substring: str = ''
+        for character in cell_ref:
+            try:
+                _ = int(character)
+
+            except ValueError:
+                column_substring += character
+
+        return column_substring
 
 
 class WrongInputStructure(Exception):
