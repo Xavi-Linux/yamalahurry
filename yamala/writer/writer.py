@@ -2,8 +2,9 @@
 Module for Writer classes
 """
 import abc
+from openpyxl.formatting.rule import CellIsRule, Rule
 from openpyxl.styles import Alignment, Font, PatternFill
-from openpyxl.utils import column_index_from_string
+from openpyxl.utils import column_index_from_string, get_column_letter
 from openpyxl.workbook.workbook import Workbook
 from openpyxl.worksheet.worksheet import Worksheet
 from pathlib import Path
@@ -32,6 +33,20 @@ class ConditionalTableStyle:
             start_color='FFC0C0C0',
             end_color='FFC0C0C0'
         )
+        self.true_format: Rule = CellIsRule(
+            '==',
+            ['1'],
+            stopIfTrue=True,
+            font=Font(color='FF3C9536'),
+            fill=PatternFill(fill_type='solid', start_color='FF3C9536', end_color='FF3C9536')
+        )
+        self.false_format: Rule = CellIsRule(
+            '==',
+            ['0'],
+            stopIfTrue=True,
+            font=Font(color='FFFF6666'),
+            fill=PatternFill(fill_type='solid', start_color='FFFF6666', end_color='FFFF6666')
+        )
 
     @property
     def anchor(self) -> str:
@@ -54,6 +69,12 @@ class ConditionalTableStyle:
                 sheet.cell(row_num, self._anchor_column).font = self.font_style
                 sheet.cell(row_num, self._anchor_column).alignment = self.row_header_alignment
                 sheet.cell(row_num, self._anchor_column).fill = self.row_header_fill
+
+        initial_cell_ref: str = get_column_letter(self._anchor_column + 1) + str(self._anchor_row + 1)
+        final_cell_ref: str = get_column_letter(max_column) + str(max_row)
+        full_ref: str = initial_cell_ref + ':' + final_cell_ref
+        sheet.conditional_formatting.add(full_ref, self.true_format)
+        sheet.conditional_formatting.add(full_ref, self.false_format)
 
     @staticmethod
     def _get_row_int(cell_ref: str) -> int:

@@ -2,9 +2,10 @@
 Test file for the Writer Classes
 """
 import pytest
+
 from openpyxl.worksheet.worksheet import Worksheet
 from pathlib import Path
-from typing import Dict
+from typing import Dict, List
 
 from yamalahurry.yamala.writer import OpenxlpyWriter, WrongInputStructure
 
@@ -410,6 +411,8 @@ def test_excel_content_and_style(generate_writer, inputs, expected):
     generate_writer.process(inputs)
     for sheet in expected:
         ws:Worksheet = generate_writer.workbook.get_sheet_by_name(sheet)
+        #Retrieve cell range with formatting rules:
+        formatted: List = [c for cf in ws.conditional_formatting._cf_rules for c in cf.cells.ranges]
         for cells in expected[sheet]:
             cell_ref: str = cells[1] + str(cells[0])
             #Content assertion:
@@ -430,6 +433,10 @@ def test_excel_content_and_style(generate_writer, inputs, expected):
 
             else:
                 assert not ws[cell_ref].font.bold
+
+                #Check whether the cell has a formatting rule:
+                if ws[cell_ref].value == 1 or ws[cell_ref].value == 0:
+                    assert any([(ws[cell_ref].row, ws[cell_ref].column) in f.cells for f in formatted])
 
 
 @pytest.mark.parametrize(
@@ -807,5 +814,5 @@ def test_full_flow():
     target_folder: str = '/home/xavi/Documents/Pynotes/yamalaHarris/yamalahurry/yamala/output'
     writer = OpenxlpyWriter(target_folder)
     writer.process(_CONSOLIDATED_INPUT)
-    writer.save('test_7.xlsx')
+    writer.save('test_9.xlsx')
     assert True
