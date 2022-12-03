@@ -407,7 +407,6 @@ def test_excel_content_and_style(generate_writer, inputs, expected):
     """
     Test whether information is placed in the right cells
     """
-    print(inputs)
     generate_writer.process(inputs)
     for sheet in expected:
         ws:Worksheet = generate_writer.workbook.get_sheet_by_name(sheet)
