@@ -4,6 +4,7 @@ Classes that transform outputs of a reader into inputs of a writer
 
 import abc
 from pathlib import Path
+from typing import List
 from .reader import AbstractReader, PyYamlReader
 from .writer import AbstractWriter, OpenxlpyWriter
 
@@ -34,3 +35,25 @@ class AbstractConverter(abc.ABC):
         self.read()
         self.transform()
         self.write()
+
+
+class PyYamlToOpenpyxlConverter(AbstractConverter):
+    """
+    Class that uses third-party yaml handler pyyaml and third-party Excel handler
+    Openpyxl.
+    """
+    def __init__(self, files: List[str], destination: Path, recursive: bool):
+        self.files: List[str] = files
+        self.destination: Path = destination
+        self.recursive: bool = recursive
+        self.reader = PyYamlReader()
+        self.writer = OpenxlpyWriter(Path.cwd())
+
+    def read(self):
+        pass
+
+    def transform(self):
+        pass
+
+    def write(self):
+        pass
