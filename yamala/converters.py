@@ -4,7 +4,7 @@ Classes that transform outputs of a reader into inputs of a writer
 
 import abc
 from pathlib import Path
-from typing import List, Union
+from typing import List
 from .reader import AbstractReader, PyYamlReader
 from .writer import AbstractWriter, OpenxlpyWriter
 
@@ -80,4 +80,3 @@ class PyYamlToOpenpyxlConverter(AbstractConverter):
                 raise FileNotFoundError(f'{file} does not exist')
 
         self._are_files = all(map(Path.is_file, self._converted_files))
-
