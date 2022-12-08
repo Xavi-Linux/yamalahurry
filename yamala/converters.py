@@ -77,7 +77,7 @@ class PyYamlToOpenpyxlConverter(AbstractConverter):
         for file in self._files:
             self._converted_files.append(Path(file))
             if not self._converted_files[-1].exists():
-                pass
+                raise FileNotFoundError(f'{file} does not exist')
 
         self._are_files = all(map(Path.is_file, self._converted_files))
 

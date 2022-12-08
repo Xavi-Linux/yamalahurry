@@ -4,6 +4,7 @@ Tests for the converter class
 
 import pytest
 
+import sys
 from pathlib import Path
 from typing import Callable, Dict, List, Literal
 from yamalahurry.yamala.converters import PyYamlToOpenpyxlConverter
@@ -33,7 +34,7 @@ def files_path_factory(tmp_path) -> Callable:
 
 def test_converter_instantiation():
     inputs: Dict = {
-        'files': ['folder1', 'folder2'],
+        'files': ['.', '../.'],
         'destination': Path('/folder/'),
         'recursive': False
     }
@@ -91,3 +92,37 @@ def test_files_param_inspector(files_path_factory, inputs, expected):
 
     assert converter._are_files == expected
     assert all(map(lambda f: isinstance(f, Path), converter._converted_files))
+
+# ### Sad Path
+
+
+@pytest.mark.parametrize(
+    ('inputs', 'expected'),
+    [
+        (#Test 1
+            ['folder1', 'folder2'],
+            FileNotFoundError
+        ),
+        (#Test 2
+            ['file.yml', 'file2.yml'],
+            FileNotFoundError
+        )
+    ], ids=[
+        'missing-folder-1',
+        'missing-file-1'
+    ]
+)
+def test_file_does_not_exist(inputs, expected):
+    """
+    Test whether the converter raises and error when it receives a
+    non-existing file.
+    """
+    constructor: Dict = {
+        'files': inputs,
+        'destination': Path('/folder/'),
+        'recursive': False
+    }
+    with pytest.raises(expected) as exp:
+        _ = PyYamlToOpenpyxlConverter(**constructor)
+
+    assert exp.type == expected
