@@ -51,6 +51,7 @@ class PyYamlToOpenpyxlConverter(AbstractConverter):
 
         self.destination: Path = destination
         self.recursive: bool = recursive
+        self.processed_files: int = 0
         self.reader = PyYamlReader()
         self.writer = OpenxlpyWriter(Path.cwd())
 
@@ -65,7 +66,13 @@ class PyYamlToOpenpyxlConverter(AbstractConverter):
         self._inspect_files()
 
     def read(self) -> None:
-        pass
+        for file in self._converted_files:
+            if self._are_files:
+                self._read_file(file)
+                self.processed_files += 1
+
+            else:
+                self._read_folder(file)
 
     def transform(self) -> None:
         pass
@@ -80,3 +87,16 @@ class PyYamlToOpenpyxlConverter(AbstractConverter):
                 raise FileNotFoundError(f'{file} does not exist')
 
         self._are_files = all(map(Path.is_file, self._converted_files))
+
+    def _read_file(self, file: Path) -> None:
+        pass
+
+    def _read_folder(self, folder: Path):
+        for file in folder.iterdir():
+            if file.is_dir() and self.recursive:
+                self._read_folder(file)
+
+            else:
+                if file.suffix == '.yaml' or file.suffix == '.yml':
+                    self._read_file(file)
+                    self.processed_files += 1
