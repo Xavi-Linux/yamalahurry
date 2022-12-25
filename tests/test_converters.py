@@ -5,6 +5,7 @@ Tests for the converter class
 import pytest
 
 from pathlib import Path
+from textwrap import dedent
 from typing import Callable, Dict, List, Literal, Union
 from yamalahurry.yamala.converters import PyYamlToOpenpyxlConverter
 
@@ -56,10 +57,23 @@ def create_nested_folders(tmp_path) -> Callable:
 
                 for y in range(0, yamls):
                     new_yaml = new_folder / 'file{0}.yaml'.format(str(y))
-                    new_yaml.write_text('1')
+                    new_yaml.write_text(
+                        dedent(
+                            """
+                            version: 1.0
+                            name: pokemons
+                            team:
+                                - Squirtle
+                                - Charmander
+                                - Mudbray
+                                - Chansey
+                                - Fletchinder
+                            """
+                        )
+                    )
 
                 for ny in range(0, non_yamls):
-                    new_non_yaml = new_folder / 'file{0}.txt'.format(str(y))
+                    new_non_yaml = new_folder / 'file{0}.txt'.format(str(ny))
                     new_non_yaml.write_text('2')
 
         return list(map(lambda f: str(Path(f).resolve()), new_folders))
