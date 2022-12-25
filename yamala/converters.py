@@ -96,9 +96,7 @@ class PyYamlToOpenpyxlConverter(AbstractConverter):
                 self.raw_contents.append(document)
 
             else:
-                self.raw_contents.append(
-                    {document: None}
-                )
+                self.raw_contents.append({document: None})
 
     def _read_folder(self, folder: Path):
         for file in folder.iterdir():
