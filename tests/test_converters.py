@@ -229,6 +229,104 @@ def test_read_method(fixture_name, inputs, recursive, expected, request):
 
     converter.read()
     assert converter.processed_files == expected
+    assert hasattr(converter, 'raw_contents') and isinstance(converter.raw_contents, List)
+    assert len(converter.raw_contents) == expected
+    for element in converter.raw_contents:
+        assert isinstance(element, Dict)
+
+
+@pytest.mark.parametrize(
+    ('file_content', 'expected'),
+    [
+        (#Test 1
+            dedent(
+                """
+                app: pokemon
+                version: 2.0
+                pokemons: ['squirtle', 'charmander']
+                ---
+                app: pokemon
+                version: 3.0
+                pokemons: ['bulbasur', 'pikachu']
+                """
+            ),
+            2
+        ),
+        (#Test 2
+            dedent(
+                """
+                app: pokemon
+                version: 2.0
+                pokemons: ['squirtle', 'charmander']
+                ---
+                app: pokemon
+                version: 3.0
+                pokemons: ['bulbasur', 'pikachu']
+                ---
+                app: pokemon
+                version: 4.0
+                pokemons: ['chansey', 'ponyta']                                
+                """
+            ),
+            3
+        ),
+        (#Test 3
+            dedent(
+               """
+                app: pokemon
+                version: 2.0
+                pokemons: ['squirtle', 'charmander']
+                ---
+                app: pokemon
+                version: 3.0
+                pokemons: ['bulbasur', 'pikachu']
+                ---
+                app: pokemon
+                version: 4.0
+                pokemons: ['chansey', 'ponyta']
+                ---
+                app: pokemon
+                version: 5.0
+                pokemons: ['poliwag', 'sandslash']               
+               """
+            ),
+            4
+        ),
+        (#Test 5
+            dedent(
+                """
+                app: pokemon
+                version: 2.0
+                pokemons: ['squirtle', 'charmander']
+                ---
+                hello
+                """
+            ),
+            2
+        )
+    ],
+    ids=[
+        'one-doc-two-files-01',
+        'one-doc-three-files-01',
+        'one-doc-four-files-01',
+        'one-doc-two-files-02'
+    ]
+)
+def test_read_multiple_docs_per_file(files_path_factory, file_content, expected):
+    """
+    Test if the reader is able to read more than one file for each document
+    """
+    files_list = files_path_factory(['test.yaml'], 'f', file_content)
+    constructor: Dict = {
+        'files': files_list,
+        'destination': Path('/folder/'),
+        'recursive': False
+    }
+    converter = PyYamlToOpenpyxlConverter(**constructor)
+    converter.read()
+
+    assert converter.processed_files == 1
+    assert len(converter.raw_contents) == expected
 
 
 # ### Sad Path
