@@ -229,10 +229,10 @@ def test_read_method(fixture_name, inputs, recursive, expected, request):
 
     converter.read()
     assert converter.processed_files == expected
-    assert hasattr(converter, 'raw_contents') and isinstance(converter.raw_contents, List)
+    assert hasattr(converter, 'raw_contents') and isinstance(converter.raw_contents, Dict)
     assert len(converter.raw_contents) == expected
-    for element in converter.raw_contents:
-        assert isinstance(element, Dict)
+    for value in converter.raw_contents.values():
+        assert isinstance(value, List)
 
 
 @pytest.mark.parametrize(
@@ -326,7 +326,7 @@ def test_read_multiple_docs_per_file(files_path_factory, file_content, expected)
     converter.read()
 
     assert converter.processed_files == 1
-    assert len(converter.raw_contents) == expected
+    assert len(converter.raw_contents['test_test_0']) == expected
 
 
 # ### Sad Path

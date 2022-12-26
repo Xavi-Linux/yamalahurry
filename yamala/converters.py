@@ -3,8 +3,9 @@ Classes that transform outputs of a reader into inputs of a writer
 """
 
 import abc
+from collections import defaultdict
 from pathlib import Path
-from typing import Dict, List
+from typing import Any, Dict, List
 from .reader import AbstractReader, PyYamlReader
 from .writer import AbstractWriter, OpenxlpyWriter
 
@@ -52,7 +53,7 @@ class PyYamlToOpenpyxlConverter(AbstractConverter):
         self.destination: Path = destination
         self.recursive: bool = recursive
         self.processed_files: int = 0
-        self.raw_contents: List[Dict] = []
+        self.raw_contents: Dict[List[Any]] = defaultdict(list)
         self.reader = PyYamlReader()
         self.writer = OpenxlpyWriter(Path.cwd())
 
@@ -91,12 +92,13 @@ class PyYamlToOpenpyxlConverter(AbstractConverter):
 
     def _read_file(self, file: Path) -> None:
         documents: List = self.reader.load(file)
+        key: str = file.parent.stem + '_' + file.stem + '_' + str(self.processed_files)
         for document in documents:
             if isinstance(document, Dict):
-                self.raw_contents.append(document)
+                self.raw_contents[key].append(document)
 
             else:
-                self.raw_contents.append({document: None})
+                self.raw_contents[key].append({document: None})
 
     def _read_folder(self, folder: Path):
         for file in folder.iterdir():
